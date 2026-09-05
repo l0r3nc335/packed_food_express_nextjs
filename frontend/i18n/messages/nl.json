@@ -1,0 +1,54 @@
+{
+  "app.title": "Voedingsproducten zoeken",
+  "app.tagline": "Zoek verpakte voedingsproducten uit de Open Food Facts-database.",
+  "language.label": "Taal",
+
+  "search.label": "Zoek een product",
+  "search.placeholder": "bijv. chocolade, yoghurt, olijfolie",
+  "search.submit": "Zoeken",
+  "search.searching": "Bezig met zoeken…",
+  "search.promptTitle": "Begin met een zoekterm",
+  "search.promptBody": "Typ een productnaam of trefwoord om resultaten te zien.",
+  "search.emptyTitle": "Geen producten gevonden",
+  "search.emptyBody": "We konden niets vinden voor “{query}”. Probeer een andere of kortere term.",
+  "search.resultsCount": "{count} producten gevonden voor “{query}”",
+  "search.error": "Er ging iets mis bij het zoeken. Probeer het opnieuw.",
+
+  "recent.title": "Recente zoekopdrachten",
+  "recent.empty": "Je recente zoekopdrachten verschijnen hier.",
+
+  "product.unknownName": "Product zonder naam",
+  "product.noBrand": "Onbekend merk",
+  "product.noImage": "Geen afbeelding beschikbaar",
+  "product.barcode": "Barcode",
+
+  "nutrition.title": "Voedingswaarden",
+  "nutrition.per100": "Per 100 g / 100 ml",
+  "nutrition.locked": "Alleen voor abonnees",
+  "nutrition.lockedBody": "Activeer het maandabonnement om voedingswaarden te bekijken.",
+  "nutrition.unavailable": "Open Food Facts heeft geen voedingsgegevens voor dit product.",
+  "nutrition.energy": "Energie",
+  "nutrition.fat": "Vetten",
+  "nutrition.saturatedFat": "waarvan verzadigd",
+  "nutrition.carbohydrates": "Koolhydraten",
+  "nutrition.sugars": "waarvan suikers",
+  "nutrition.fiber": "Vezels",
+  "nutrition.proteins": "Eiwitten",
+  "nutrition.salt": "Zout",
+  "nutrition.servingSize": "Portiegrootte",
+  "nutrition.nutriScore": "Nutri-Score",
+
+  "subscription.active": "Abonnement actief",
+  "subscription.inactive": "Geen actief abonnement",
+  "subscription.activeUntil": "Actief tot {date}",
+  "subscription.upgrade": "Maandelijks abonneren",
+  "subscription.upgrading": "Doorsturen…",
+  "subscription.cancel": "Abonnement opzeggen",
+  "subscription.error": "Kon de betaling niet starten. Probeer het opnieuw.",
+  "subscription.stubNotice": "Er zijn geen Stripe-testsleutels ingesteld, dus de betaling wordt lokaal gesimuleerd.",
+
+  "checkout.success": "Abonnement geactiveerd. Voedingswaarden zijn nu zichtbaar.",
+  "checkout.canceled": "Betaling geannuleerd. Er is niets in rekening gebracht.",
+
+  "footer.dataSource": "Productgegevens van Open Food Facts, beschikbaar onder de Open Database License."
+}

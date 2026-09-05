@@ -1,0 +1,39 @@
+{
+  "name": "food-product-search",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack food product search using Open Food Facts, with i18n and Stripe-gated nutrition data",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,magenta \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "npm run dev --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace backend && npm run build --workspace frontend",
+    "test": "npm run test --workspace backend && npm run test --workspace frontend",
+    "cypress:run": "cypress run",
+    "cypress:open": "cypress open",
+    "e2e:frontend": "cross-env NEXT_PUBLIC_API_URL=http://localhost:4100 NEXT_DIST_DIR=.next-e2e npm run e2e:serve --workspace frontend",
+    "e2e:run": "start-server-and-test e2e:frontend http://localhost:3100 cypress:run",
+    "e2e:headed": "start-server-and-test e2e:frontend http://localhost:3100 cypress:open",
+    "e2e": "node scripts/run-e2e.mjs",
+    "e2e:open": "node scripts/run-e2e.mjs open",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:migrate": "npm run db:migrate --workspace backend",
+    "db:migrate:fresh": "npm run db:migrate:fresh --workspace backend",
+    "db:seed": "npm run db:seed --workspace backend"
+  },
+  "devDependencies": {
+    "@testing-library/cypress": "^10.1.3",
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
+    "cypress": "^16.0.0",
+    "start-server-and-test": "^3.0.12"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

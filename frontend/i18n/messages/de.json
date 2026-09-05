@@ -1,0 +1,54 @@
+{
+  "app.title": "Lebensmittelsuche",
+  "app.tagline": "Durchsuchen Sie verpackte Lebensmittel aus der Open-Food-Facts-Datenbank.",
+  "language.label": "Sprache",
+
+  "search.label": "Produkt suchen",
+  "search.placeholder": "z. B. Schokolade, Joghurt, Olivenöl",
+  "search.submit": "Suchen",
+  "search.searching": "Suche läuft…",
+  "search.promptTitle": "Mit einem Suchbegriff beginnen",
+  "search.promptBody": "Geben Sie einen Produktnamen oder ein Stichwort ein.",
+  "search.emptyTitle": "Keine Produkte gefunden",
+  "search.emptyBody": "Für „{query}“ wurde nichts gefunden. Versuchen Sie einen anderen oder kürzeren Begriff.",
+  "search.resultsCount": "{count} Produkte für „{query}“ gefunden",
+  "search.error": "Bei der Suche ist ein Fehler aufgetreten. Bitte erneut versuchen.",
+
+  "recent.title": "Letzte Suchanfragen",
+  "recent.empty": "Ihre letzten Suchanfragen erscheinen hier.",
+
+  "product.unknownName": "Produkt ohne Namen",
+  "product.noBrand": "Unbekannte Marke",
+  "product.noImage": "Kein Bild verfügbar",
+  "product.barcode": "Barcode",
+
+  "nutrition.title": "Nährwerte",
+  "nutrition.per100": "Pro 100 g / 100 ml",
+  "nutrition.locked": "Nur für Abonnenten",
+  "nutrition.lockedBody": "Aktivieren Sie das Monatsabo, um die Nährwerte zu sehen.",
+  "nutrition.unavailable": "Open Food Facts hat keine Nährwertangaben für dieses Produkt.",
+  "nutrition.energy": "Energie",
+  "nutrition.fat": "Fett",
+  "nutrition.saturatedFat": "davon gesättigte Fettsäuren",
+  "nutrition.carbohydrates": "Kohlenhydrate",
+  "nutrition.sugars": "davon Zucker",
+  "nutrition.fiber": "Ballaststoffe",
+  "nutrition.proteins": "Eiweiß",
+  "nutrition.salt": "Salz",
+  "nutrition.servingSize": "Portionsgröße",
+  "nutrition.nutriScore": "Nutri-Score",
+
+  "subscription.active": "Abo aktiv",
+  "subscription.inactive": "Kein aktives Abo",
+  "subscription.activeUntil": "Aktiv bis {date}",
+  "subscription.upgrade": "Monatlich abonnieren",
+  "subscription.upgrading": "Weiterleitung…",
+  "subscription.cancel": "Abo kündigen",
+  "subscription.error": "Der Bezahlvorgang konnte nicht gestartet werden. Bitte erneut versuchen.",
+  "subscription.stubNotice": "Es sind keine Stripe-Testschlüssel konfiguriert, der Bezahlvorgang wird lokal simuliert.",
+
+  "checkout.success": "Abo aktiviert. Die Nährwerte sind jetzt sichtbar.",
+  "checkout.canceled": "Bezahlvorgang abgebrochen. Es wurde nichts berechnet.",
+
+  "footer.dataSource": "Produktdaten von Open Food Facts, verfügbar unter der Open Database License."
+}

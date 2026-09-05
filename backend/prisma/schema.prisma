@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// The assignment uses a single demo user, so there is no auth table.
+model User {
+  id               String        @id @default(cuid())
+  email            String        @unique
+  name             String
+  stripeCustomerId String?       @unique @map("stripe_customer_id")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+  subscription     Subscription?
+  searches         SearchQuery[]
+
+  @@map("users")
+}
+
+/// Mirrors Stripe subscription state; the backend reads this before returning nutrition.
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String    @unique @map("user_id")
+  status               String    @default("none") @db.VarChar(32)
+  stripeSubscriptionId String?   @unique @map("stripe_subscription_id")
+  currentPeriodEnd     DateTime? @map("current_period_end")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+/// Recent searches shown as quick-repeat chips in the UI.
+model SearchQuery {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  term        String   @db.VarChar(100)
+  locale      String   @db.VarChar(5)
+  resultCount Int      @map("result_count")
+  createdAt   DateTime @default(now()) @map("created_at")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("search_queries")
+}

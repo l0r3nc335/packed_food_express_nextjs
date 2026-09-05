@@ -1,0 +1,54 @@
+{
+  "app.title": "Food Product Search",
+  "app.tagline": "Search packaged food products from the Open Food Facts database.",
+  "language.label": "Language",
+
+  "search.label": "Search for a product",
+  "search.placeholder": "e.g. chocolate, yoghurt, olive oil",
+  "search.submit": "Search",
+  "search.searching": "Searching…",
+  "search.promptTitle": "Start with a search term",
+  "search.promptBody": "Type a product name or keyword to see matching products.",
+  "search.emptyTitle": "No products found",
+  "search.emptyBody": "We could not find anything for “{query}”. Try a different or shorter term.",
+  "search.resultsCount": "{count} products found for “{query}”",
+  "search.error": "Something went wrong while searching. Please try again.",
+
+  "recent.title": "Recent searches",
+  "recent.empty": "Your recent searches will appear here.",
+
+  "product.unknownName": "Unnamed product",
+  "product.noBrand": "Unknown brand",
+  "product.noImage": "No image available",
+  "product.barcode": "Barcode",
+
+  "nutrition.title": "Nutritional values",
+  "nutrition.per100": "Per 100 g / 100 ml",
+  "nutrition.locked": "Subscribers only",
+  "nutrition.lockedBody": "Activate the monthly subscription to view nutritional values.",
+  "nutrition.unavailable": "Open Food Facts has no nutritional data for this product.",
+  "nutrition.energy": "Energy",
+  "nutrition.fat": "Fat",
+  "nutrition.saturatedFat": "of which saturates",
+  "nutrition.carbohydrates": "Carbohydrates",
+  "nutrition.sugars": "of which sugars",
+  "nutrition.fiber": "Fibre",
+  "nutrition.proteins": "Protein",
+  "nutrition.salt": "Salt",
+  "nutrition.servingSize": "Serving size",
+  "nutrition.nutriScore": "Nutri-Score",
+
+  "subscription.active": "Subscription active",
+  "subscription.inactive": "No active subscription",
+  "subscription.activeUntil": "Active until {date}",
+  "subscription.upgrade": "Subscribe monthly",
+  "subscription.upgrading": "Redirecting…",
+  "subscription.cancel": "Cancel subscription",
+  "subscription.error": "Could not start the checkout. Please try again.",
+  "subscription.stubNotice": "Stripe test keys are not configured, so checkout is simulated locally.",
+
+  "checkout.success": "Subscription activated. Nutritional values are now visible.",
+  "checkout.canceled": "Checkout was cancelled. Nothing was charged.",
+
+  "footer.dataSource": "Product data from Open Food Facts, available under the Open Database License."
+}

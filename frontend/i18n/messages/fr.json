@@ -1,0 +1,54 @@
+{
+  "app.title": "Recherche de produits alimentaires",
+  "app.tagline": "Recherchez des produits alimentaires emballés dans la base Open Food Facts.",
+  "language.label": "Langue",
+
+  "search.label": "Rechercher un produit",
+  "search.placeholder": "ex. chocolat, yaourt, huile d’olive",
+  "search.submit": "Rechercher",
+  "search.searching": "Recherche en cours…",
+  "search.promptTitle": "Commencez par un terme de recherche",
+  "search.promptBody": "Saisissez un nom de produit ou un mot-clé pour voir les résultats.",
+  "search.emptyTitle": "Aucun produit trouvé",
+  "search.emptyBody": "Aucun résultat pour « {query} ». Essayez un terme différent ou plus court.",
+  "search.resultsCount": "{count} produits trouvés pour « {query} »",
+  "search.error": "Une erreur est survenue pendant la recherche. Veuillez réessayer.",
+
+  "recent.title": "Recherches récentes",
+  "recent.empty": "Vos recherches récentes apparaîtront ici.",
+
+  "product.unknownName": "Produit sans nom",
+  "product.noBrand": "Marque inconnue",
+  "product.noImage": "Aucune image disponible",
+  "product.barcode": "Code-barres",
+
+  "nutrition.title": "Valeurs nutritionnelles",
+  "nutrition.per100": "Pour 100 g / 100 ml",
+  "nutrition.locked": "Réservé aux abonnés",
+  "nutrition.lockedBody": "Activez l’abonnement mensuel pour voir les valeurs nutritionnelles.",
+  "nutrition.unavailable": "Open Food Facts n’a pas de données nutritionnelles pour ce produit.",
+  "nutrition.energy": "Énergie",
+  "nutrition.fat": "Matières grasses",
+  "nutrition.saturatedFat": "dont acides gras saturés",
+  "nutrition.carbohydrates": "Glucides",
+  "nutrition.sugars": "dont sucres",
+  "nutrition.fiber": "Fibres",
+  "nutrition.proteins": "Protéines",
+  "nutrition.salt": "Sel",
+  "nutrition.servingSize": "Portion",
+  "nutrition.nutriScore": "Nutri-Score",
+
+  "subscription.active": "Abonnement actif",
+  "subscription.inactive": "Aucun abonnement actif",
+  "subscription.activeUntil": "Actif jusqu’au {date}",
+  "subscription.upgrade": "S’abonner mensuellement",
+  "subscription.upgrading": "Redirection…",
+  "subscription.cancel": "Résilier l’abonnement",
+  "subscription.error": "Impossible de démarrer le paiement. Veuillez réessayer.",
+  "subscription.stubNotice": "Aucune clé de test Stripe n’est configurée, le paiement est donc simulé localement.",
+
+  "checkout.success": "Abonnement activé. Les valeurs nutritionnelles sont maintenant visibles.",
+  "checkout.canceled": "Paiement annulé. Aucun montant n’a été débité.",
+
+  "footer.dataSource": "Données produit d’Open Food Facts, disponibles sous licence Open Database."
+}
