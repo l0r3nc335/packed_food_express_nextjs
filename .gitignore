@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.next/
+.next-e2e/
+out/
+coverage/
+*.tsbuildinfo
+cypress/downloads/
+cypress/screenshots/
+cypress/videos/
+
+# Local planning notes, not part of the deliverable
+.cursor/plans/
+
+.env
+.env.local
+.env.*.local
+
+*.log
+npm-debug.log*
+
+.DS_Store
+Thumbs.db
