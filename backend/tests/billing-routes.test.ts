@@ -12,7 +12,9 @@ describe("POST /api/billing/checkout", () => {
 
     expect(response.status).toBe(200);
     expect(body.mode).toBe("stub");
-    expect(body.url).toContain(encodeURIComponent(`${FRONTEND_URL}/de?checkout=success`));
+    expect(body.url).toContain(
+      encodeURIComponent(`${FRONTEND_URL}/de?checkout=success&session_id={CHECKOUT_SESSION_ID}`),
+    );
   });
 
   it("falls back to English for an unsupported locale", async () => {
@@ -21,8 +23,88 @@ describe("POST /api/billing/checkout", () => {
     const response = await request(app).post("/api/billing/checkout").send({ locale: "es" });
 
     expect((response.body as { url: string }).url).toContain(
-      encodeURIComponent(`${FRONTEND_URL}/en?checkout=success`),
+      encodeURIComponent(`${FRONTEND_URL}/en?checkout=success&session_id={CHECKOUT_SESSION_ID}`),
     );
+  });
+});
+
+describe("POST /api/billing/confirm", () => {
+  it("returns applied=false in stub mode (activation happens via stub/complete)", async () => {
+    const { app } = createTestApp();
+
+    const response = await request(app).post("/api/billing/confirm").send({});
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ applied: false, status: null });
+  });
+
+  it("activates from a provider confirmCheckoutSession result", async () => {
+    const { app, users } = createTestApp({
+      provider: {
+        mode: "stripe",
+        async createCheckoutSession() {
+          return { id: "cs_1", url: "https://checkout.stripe.test", stripeCustomerId: "cus_1" };
+        },
+        parseWebhook() {
+          return { type: "ignored", eventType: "noop" };
+        },
+        async confirmCheckoutSession() {
+          return {
+            type: "subscription_changed",
+            status: "active",
+            stripeCustomerId: "cus_1",
+            stripeSubscriptionId: "sub_1",
+            currentPeriodEnd: new Date("2099-06-01T00:00:00.000Z"),
+          };
+        },
+        async syncCustomerSubscription() {
+          return null;
+        },
+      },
+    });
+
+    const response = await request(app)
+      .post("/api/billing/confirm")
+      .send({ sessionId: "cs_test_123" });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ applied: true, status: "active" });
+    expect(users.user.subscription?.status).toBe("active");
+    expect(users.user.stripeCustomerId).toBe("cus_1");
+  });
+
+  it("falls back to syncing the stored Stripe customer when no session id is given", async () => {
+    const { app, users } = createTestApp({
+      user: { stripeCustomerId: "cus_existing" },
+      provider: {
+        mode: "stripe",
+        async createCheckoutSession() {
+          return { id: "cs_1", url: "https://checkout.stripe.test", stripeCustomerId: "cus_existing" };
+        },
+        parseWebhook() {
+          return { type: "ignored", eventType: "noop" };
+        },
+        async confirmCheckoutSession() {
+          return null;
+        },
+        async syncCustomerSubscription(customerId) {
+          expect(customerId).toBe("cus_existing");
+          return {
+            type: "subscription_changed",
+            status: "active",
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: "sub_synced",
+            currentPeriodEnd: null,
+          };
+        },
+      },
+    });
+
+    const response = await request(app).post("/api/billing/confirm").send({});
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ applied: true, status: "active" });
+    expect(users.user.subscription?.status).toBe("active");
   });
 });
 

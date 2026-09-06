@@ -67,6 +67,7 @@ Without Stripe keys the app is fully usable: checkout is simulated locally. See
 | GET | `/api/searches/recent?limit=` | Recent searches of the demo user, de-duplicated. |
 | GET | `/api/me` | Demo user and subscription status. |
 | POST | `/api/billing/checkout` | Creates a monthly Checkout session. |
+| POST | `/api/billing/confirm` | Confirms a Checkout session (or syncs the Stripe customer) after return. |
 | POST | `/api/stripe/webhook` | Stripe webhook; verifies the signature. |
 
 Errors are always `{ "error": { "code": ..., "message": ... } }` with a meaningful status code.
@@ -165,6 +166,11 @@ Handled events: `checkout.session.completed`, `customer.subscription.created|upd
 Because Stripe moved `current_period_end` from the subscription onto its items in recent API
 versions, both locations are read.
 
+Checkout success URLs include `{CHECKOUT_SESSION_ID}`. When the browser returns, the frontend
+calls `POST /api/billing/confirm`, which retrieves the session (or lists subscriptions for the
+stored customer) and unlocks nutrition even if `stripe listen` was not running. Webhooks remain
+the source of truth for later renewals and cancellations.
+
 ---
 
 ## Tests
@@ -233,7 +239,8 @@ Cypress E2E:
   if a language is missing, English is shown. Ingredients and categories are not translated.
 - **Nutrition is per 100 g/ml.** Per-serving values are not calculated.
 - **`current_period_end` is not set immediately.** `checkout.session.completed` does not include
-  it; it arrives with the first `customer.subscription.updated` event. Until then the
+  it; it arrives with the first `customer.subscription.updated` event, or when
+  `/api/billing/confirm` expands the subscription on the Checkout session. Until then the
   subscription is active without an end date.
 - **No end-to-end tests.** Both suites use mocks; no test runs against a live MySQL, Stripe or
   Open Food Facts.

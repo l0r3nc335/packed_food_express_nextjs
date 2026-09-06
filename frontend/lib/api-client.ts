@@ -58,6 +58,15 @@ export async function startCheckout(locale: Locale): Promise<{ url: string }> {
   });
 }
 
+/** Syncs subscription after Stripe redirects back (or when a webhook was missed). */
+export async function confirmCheckout(sessionId?: string): Promise<{ applied: boolean; status: string | null }> {
+  return request<{ applied: boolean; status: string | null }>("/api/billing/confirm", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(sessionId ? { sessionId } : {}),
+  });
+}
+
 export async function cancelStubSubscription(): Promise<void> {
   await request<{ status: string }>("/api/billing/stub/cancel", { method: "POST" });
 }

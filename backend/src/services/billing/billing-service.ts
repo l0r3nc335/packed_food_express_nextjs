@@ -1,6 +1,6 @@
 import { logger } from "../../lib/logger";
 import type { UserRepository } from "../../repositories/types";
-import type { BillingEvent, BillingProvider } from "./types";
+import type { BillingEvent, BillingProvider, SubscriptionChangedEvent } from "./types";
 
 export type BillingServiceDeps = {
   users: UserRepository;
@@ -13,15 +13,47 @@ export type StartCheckoutInput = {
   apiBaseUrl: string;
 };
 
+export type ConfirmCheckoutInput = {
+  sessionId?: string;
+};
+
 export type BillingService = {
   readonly mode: BillingProvider["mode"];
   startCheckout(input: StartCheckoutInput): Promise<{ url: string; sessionId: string }>;
   handleWebhook(rawBody: Buffer, signature: string | undefined): Promise<BillingEvent>;
+  /**
+   * Activates from a Checkout session id, or syncs from the stored Stripe customer
+   * when webhooks never reached the local API.
+   */
+  confirmCheckout(input?: ConfirmCheckoutInput): Promise<{ applied: boolean; status: string | null }>;
   /** Stub-mode only: flips the demo subscription without contacting Stripe. */
   setStubSubscription(status: "active" | "canceled"): Promise<void>;
 };
 
 export function createBillingService(deps: BillingServiceDeps): BillingService {
+  async function applySubscriptionChange(event: SubscriptionChangedEvent): Promise<void> {
+    const matched = event.stripeCustomerId
+      ? await deps.users.findByStripeCustomerId(event.stripeCustomerId)
+      : null;
+    const user = matched ?? (await deps.users.getDemoUser());
+
+    if (event.stripeCustomerId && !user.stripeCustomerId) {
+      await deps.users.setStripeCustomerId(user.id, event.stripeCustomerId);
+    }
+
+    await deps.users.upsertSubscription(user.id, {
+      status: event.status,
+      stripeSubscriptionId: event.stripeSubscriptionId,
+      currentPeriodEnd: event.currentPeriodEnd,
+    });
+
+    logger.info("Applied subscription change", {
+      userId: user.id,
+      status: event.status,
+      source: "billing",
+    });
+  }
+
   return {
     mode: deps.provider.mode,
 
@@ -47,27 +79,31 @@ export function createBillingService(deps: BillingServiceDeps): BillingService {
 
       // With one demo user we still prefer matching on the Stripe customer so the
       // handler stays correct if more users are ever introduced.
-      const matched = event.stripeCustomerId
-        ? await deps.users.findByStripeCustomerId(event.stripeCustomerId)
-        : null;
-      const user = matched ?? (await deps.users.getDemoUser());
+      await applySubscriptionChange(event);
+      return event;
+    },
 
-      if (event.stripeCustomerId && !user.stripeCustomerId) {
-        await deps.users.setStripeCustomerId(user.id, event.stripeCustomerId);
+    async confirmCheckout(input = {}) {
+      const sessionId = input.sessionId?.trim();
+      let event: SubscriptionChangedEvent | null = null;
+
+      if (sessionId) {
+        event = await deps.provider.confirmCheckoutSession(sessionId);
       }
 
-      await deps.users.upsertSubscription(user.id, {
-        status: event.status,
-        stripeSubscriptionId: event.stripeSubscriptionId,
-        currentPeriodEnd: event.currentPeriodEnd,
-      });
+      if (!event) {
+        const user = await deps.users.getDemoUser();
+        if (user.stripeCustomerId) {
+          event = await deps.provider.syncCustomerSubscription(user.stripeCustomerId);
+        }
+      }
 
-      logger.info("Applied subscription change from webhook", {
-        userId: user.id,
-        status: event.status,
-      });
+      if (!event) {
+        return { applied: false, status: null };
+      }
 
-      return event;
+      await applySubscriptionChange(event);
+      return { applied: true, status: event.status };
     },
 
     async setStubSubscription(status) {

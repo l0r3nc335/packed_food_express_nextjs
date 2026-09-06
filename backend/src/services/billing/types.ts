@@ -30,4 +30,15 @@ export type BillingProvider = {
   readonly mode: "stripe" | "stub";
   createCheckoutSession(input: CreateCheckoutInput): Promise<CheckoutSession>;
   parseWebhook(rawBody: Buffer, signature: string | undefined): BillingEvent;
+  /**
+   * Resolves subscription state after Checkout without waiting for a webhook.
+   * Returns null when the session is not paid / has no subscription yet.
+   */
+  confirmCheckoutSession(sessionId: string): Promise<SubscriptionChangedEvent | null>;
+  /**
+   * Pulls the latest subscription for a Stripe customer (local-dev / missed webhooks).
+   */
+  syncCustomerSubscription(
+    stripeCustomerId: string,
+  ): Promise<SubscriptionChangedEvent | null>;
 };

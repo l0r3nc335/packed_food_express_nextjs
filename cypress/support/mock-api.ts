@@ -185,10 +185,19 @@ export function createMockApiServer(port: number): { close(): Promise<void> } {
         return;
       }
 
-      const redirectUrl = "http://localhost:3100/en?checkout=success";
+      const redirectUrl = "http://localhost:3100/en?checkout=success&session_id=fixture-session";
       sendJson(response, 200, {
         sessionId: "fixture-session",
         url: `http://localhost:${port}/api/billing/stub/complete?redirect=${encodeURIComponent(redirectUrl)}`,
+      });
+      return;
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/billing/confirm") {
+      // Stub E2E path already activates via stub/complete; confirm is a no-op heal.
+      sendJson(response, 200, {
+        applied: state.isSubscribed,
+        status: state.isSubscribed ? "active" : null,
       });
       return;
     }

@@ -30,12 +30,28 @@ export function createBillingRoutes(
       const locale = isLocale(body?.locale) ? body.locale : DEFAULT_LOCALE;
 
       const session = await billingService.startCheckout({
-        successUrl: `${frontendUrl}/${locale}?checkout=success`,
+        // {CHECKOUT_SESSION_ID} is substituted by Stripe so we can confirm without a webhook.
+        successUrl: `${frontendUrl}/${locale}?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
         cancelUrl: `${frontendUrl}/${locale}?checkout=canceled`,
         apiBaseUrl: `${req.protocol}://${req.get("host") ?? "localhost"}`,
       });
 
       res.json({ url: session.url, sessionId: session.sessionId, mode: billingService.mode });
+    }),
+  );
+
+  /**
+   * Called when the browser returns from Stripe Checkout. Confirms the session
+   * (or syncs from the stored customer) so nutrition unlocks even if the webhook
+   * never reached localhost.
+   */
+  router.post(
+    "/confirm",
+    asyncHandler(async (req, res) => {
+      const body = req.body as { sessionId?: unknown } | undefined;
+      const sessionId = typeof body?.sessionId === "string" ? body.sessionId : undefined;
+      const result = await billingService.confirmCheckout({ sessionId });
+      res.json(result);
     }),
   );
 

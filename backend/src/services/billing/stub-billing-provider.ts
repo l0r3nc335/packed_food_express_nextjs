@@ -34,5 +34,14 @@ export function createStubBillingProvider(): BillingProvider {
       logger.warn("Received a webhook while Stripe keys are not configured; ignoring it");
       return { type: "ignored", eventType: "stub" };
     },
+
+    async confirmCheckoutSession() {
+      // Stub checkout activates via /api/billing/stub/complete before redirect.
+      return null;
+    },
+
+    async syncCustomerSubscription() {
+      return null;
+    },
   };
 }

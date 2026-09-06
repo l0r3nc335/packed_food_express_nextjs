@@ -127,5 +127,75 @@ export function createStripeBillingProvider(options: StripeProviderOptions): Bil
         }
       }
     },
+
+    async confirmCheckoutSession(sessionId) {
+      const session = await stripe.checkout.sessions.retrieve(sessionId, {
+        expand: ["subscription"],
+      });
+
+      if (session.status !== "complete" && session.payment_status !== "paid") {
+        return null;
+      }
+
+      const stripeCustomerId = readId(session.customer);
+      const subscriptionField = session.subscription;
+      const stripeSubscriptionId =
+        typeof subscriptionField === "string"
+          ? subscriptionField
+          : readId(subscriptionField);
+
+      if (!stripeSubscriptionId) {
+        return {
+          type: "subscription_changed",
+          status: "active",
+          stripeCustomerId,
+          stripeSubscriptionId: null,
+          currentPeriodEnd: null,
+        };
+      }
+
+      if (typeof subscriptionField === "object" && subscriptionField !== null) {
+        const record = readRecord(subscriptionField);
+        const status = typeof record.status === "string" ? record.status : "active";
+        return {
+          type: "subscription_changed",
+          status,
+          stripeCustomerId,
+          stripeSubscriptionId,
+          currentPeriodEnd: readPeriodEnd(record),
+        };
+      }
+
+      const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+      return {
+        type: "subscription_changed",
+        status: subscription.status,
+        stripeCustomerId,
+        stripeSubscriptionId: subscription.id,
+        currentPeriodEnd: readPeriodEnd(readRecord(subscription)),
+      };
+    },
+
+    async syncCustomerSubscription(stripeCustomerId) {
+      const subscriptions = await stripe.subscriptions.list({
+        customer: stripeCustomerId,
+        status: "all",
+        limit: 10,
+      });
+
+      const preferred =
+        subscriptions.data.find((item) => item.status === "active" || item.status === "trialing") ??
+        subscriptions.data[0];
+
+      if (!preferred) return null;
+
+      return {
+        type: "subscription_changed",
+        status: preferred.status,
+        stripeCustomerId,
+        stripeSubscriptionId: preferred.id,
+        currentPeriodEnd: readPeriodEnd(readRecord(preferred)),
+      };
+    },
   };
 }

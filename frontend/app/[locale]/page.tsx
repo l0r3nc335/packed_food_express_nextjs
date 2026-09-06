@@ -5,7 +5,12 @@ import { SearchForm } from "../../components/search-form";
 import { SubscriptionBanner } from "../../components/subscription-banner";
 import { isLocale } from "../../i18n/config";
 import { createTranslator } from "../../i18n/dictionary";
-import { fetchDemoUser, fetchRecentSearches, searchProducts } from "../../lib/api-client";
+import {
+  confirmCheckout,
+  fetchDemoUser,
+  fetchRecentSearches,
+  searchProducts,
+} from "../../lib/api-client";
 import type { MeResponse, RecentSearch, SearchResult } from "../../lib/api-types";
 
 type SearchPageProps = {
@@ -37,7 +42,19 @@ export default async function SearchPage({ params, searchParams }: SearchPagePro
   const resolvedSearchParams = await searchParams;
   const query = readParam(resolvedSearchParams.q).trim();
   const checkout = readParam(resolvedSearchParams.checkout);
+  const sessionId = readParam(resolvedSearchParams.session_id);
   const t = createTranslator(locale);
+
+  // Confirm after Checkout (and heal missed webhooks) before reading /api/me,
+  // so nutrition unlocks even when Stripe events never reached localhost.
+  if (checkout === "success") {
+    await tolerate(confirmCheckout(sessionId || undefined));
+  } else {
+    const preview = await tolerate<MeResponse>(fetchDemoUser());
+    if (preview?.billingMode === "stripe" && !preview.user.subscription.isActive) {
+      await tolerate(confirmCheckout());
+    }
+  }
 
   const [me, recent, result] = await Promise.all([
     tolerate<MeResponse>(fetchDemoUser()),
